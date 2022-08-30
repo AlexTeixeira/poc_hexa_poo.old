@@ -1,0 +1,18 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node", "jest", "reflect-metadata"],
+    "lib": ["es6"],
+    "composite": true
+  },
+  "exclude": [
+    "node_modules",
+    "**/*.d.ts"
+  ],
+  "include": [
+    "src/**/*",
+    "__tests__",
+    "__acceptance_tests__",
+    "jest.config.js"
+  ]
+}
