@@ -18,14 +18,14 @@ Feature: any people can update a todo
       |                    | "Some valid description" |
 
   Scenario Outline: Update a todo that not exists
-    Given the todo "cde"
+    Given the todo "zzz"
     Given I change the todo with <title> and <description>
     When I update the todo
     Then I should be noticed with "Selected todo does not exist"
 
     Examples:
-      | title              | description |
-      | "Some valid title" |          "Some valid description"   |
+      | title              | description              |
+      | "Some valid title" | "Some valid description" |
 
   Scenario Outline: Update a todo with valid data
     Given the todo "abc"

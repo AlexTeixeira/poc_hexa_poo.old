@@ -3,7 +3,6 @@ import {Todo} from "../../../src/domain/todoAggregate/Todo";
 import {TodoRepository} from "../../../src/domain/todoAggregate/ports/TodoRepository";
 import testContainer from "../../../src/config/TestDIContainer";
 import DIContainerType from "../../../src/domain/DIContainerType";
-import {expect} from "expect";
 
 let todoRepository: TodoRepository;
 

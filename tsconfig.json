@@ -106,7 +106,9 @@
     "skipLibCheck": true,
     /* Skip type checking all .d.ts files. */
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "declaration": false,
+    "sourceMap": true
   },
   "exclude": [
     "core/__acceptance_tests__",

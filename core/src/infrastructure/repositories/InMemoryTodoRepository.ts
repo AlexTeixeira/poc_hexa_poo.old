@@ -12,7 +12,8 @@ export class InMemoryTodoRepository implements TodoRepository {
     }
 
     async getByIdAsync(id: string): Promise<Todo | undefined> {
-        return Promise.resolve(this.todos.find(todo => todo.id === id));
+        const todo = this.todos.find(curr => curr.id === id);
+        return Promise.resolve(todo ? Object.create(todo) : undefined);
     }
 
     updateAsync(todo: Todo): Promise<void> {
@@ -31,7 +32,7 @@ export class InMemoryTodoRepository implements TodoRepository {
     }
 
     getAllAsync(): Promise<Todo[]> {
-        return Promise.resolve(this.todos);
+        return Promise.resolve([...this.todos]);
     }
 }
 

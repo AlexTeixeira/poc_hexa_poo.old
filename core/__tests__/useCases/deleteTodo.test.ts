@@ -2,33 +2,44 @@ import {TodoRepository} from "../../src/domain/todoAggregate/ports/TodoRepositor
 import testContainer from "../../src/config/TestDIContainer";
 import DIContainerType from "../../src/domain/DIContainerType";
 import {Todo} from "../../src/domain/todoAggregate/Todo";
-import {UpdateTodo} from "../../src/application/useCases/UpdateTodo";
-import {DeleteTodo} from "../../src/application/useCases/DeleteTodo";
+import {store} from "../../src/application/states/app/store";
+import {deleteTodoAsync} from "../../src/application/states/features/todo/useCases/deleteTodo";
+import {selectTodoById} from "../../src/application/states/features/todo/todosSlice";
+import {resetTodoRepository} from "../../__acceptance_tests__/commons/BeforeHook";
 
 describe("deleteTodo", () => {
     const todoId = "some-valid-guid";
     let todoRepository: TodoRepository;
 
-    beforeEach(() => {
+    beforeEach(async () => {
         todoRepository = testContainer.get<TodoRepository>(DIContainerType.TodoRepository);
-
-        todoRepository.createAsync(new Todo(todoId, "My first todo", "My first todo description"));
+        resetTodoRepository(todoRepository);
+        await todoRepository.createAsync(new Todo(todoId, "My first todo", "My first todo description"));
     });
 
+    async function dispatchTodoAsync(id: string) {
+        return store.dispatch(deleteTodoAsync(id));
+    }
+
+    async function dispatchTodoAndReturnErrorAsync(id: string) {
+        await dispatchTodoAsync(id);
+
+        return store.getState().todos.error;
+    }
+
     test("not found todo should raise an error", async () => {
-        const deleteTodo = new DeleteTodo(todoRepository);
+        const error = await dispatchTodoAndReturnErrorAsync("not-found-todo");
 
-        const func= async () => await deleteTodo.handleAsync("not-found-todo");
-
-        await expect(func).rejects.toThrow("Selected todo does not exist");
+        await expect(error).toBeDefined();
+        // @ts-ignore
+        expect(error.errors.map(err => err.message)).toContain("Selected todo does not exist");
     });
 
     test("valid todo should be deleted", async () => {
-        const deleteTodo = new DeleteTodo(todoRepository);
 
-        await deleteTodo.handleAsync(todoId);
+       await dispatchTodoAsync(todoId);
 
-        const todo = await todoRepository.getByIdAsync(todoId);
+        const todo = selectTodoById(store.getState().todos.items, todoId);
 
         expect(todo).toBeUndefined();
     });

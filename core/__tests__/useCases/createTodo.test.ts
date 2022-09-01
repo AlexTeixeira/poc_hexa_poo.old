@@ -1,43 +1,47 @@
-import {CreateTodo} from "../../src/application/useCases/CreateTodo";
 import {Todo} from "../../src/domain/todoAggregate/Todo";
-import {TodoRepository} from "../../src/domain/todoAggregate/ports/TodoRepository";
-import DIContainerType from "../../src/domain/DIContainerType";
-import testContainer from "../../src/config/TestDIContainer";
+import {RootState, store} from "../../src/application/states/app/store";
+import {createTodoAsync} from "../../src/application/states/features/todo/useCases/createTodo";
+import {selectTodoById} from "../../src/application/states/features/todo/todosSlice";
 
 describe("createTodo", () => {
     const todoGuid = "some-valid-guid";
 
-    let todoRepository: TodoRepository;
+    async function dispatchTodoAsync(title: string, description: string) {
+        return store.dispatch(createTodoAsync({
+            id: todoGuid,
+            title: title,
+            description: description,
+        }));
+    }
 
-    beforeEach(() => {
-        todoRepository = testContainer.get<TodoRepository>(DIContainerType.TodoRepository);
-    })
+    async function dispatchTodoAndReturnErrorAsync(title: string, description: string) {
+        await dispatchTodoAsync(title, description);
 
+        return store.getState().todos.error;
+    }
 
     test("unvalid title should raise an error", async () => {
-        const createTodo = new CreateTodo(todoRepository);
+        const error = await dispatchTodoAndReturnErrorAsync("", "some valid description");
 
-        const func= async () => await createTodo.handleAsync(todoGuid, "", "some valid description");
-
-        await expect(func).rejects.toThrow("Title is required");
+        await expect(error).toBeDefined();
+        // @ts-ignore
+        expect(error.errors.map(err => err.message)).toContain("Title is required");
     });
 
     test("unvalid description should raise an error", async () => {
-        const createTodo = new CreateTodo(todoRepository);
+        const error = await dispatchTodoAndReturnErrorAsync("My title", "");
 
-        const func= async () => await createTodo.handleAsync(todoGuid, "some valid title", "");
-
-        await expect(func).rejects.toThrow("Description is required");
+        await expect(error).toBeDefined();
+        // @ts-ignore
+        expect(error.errors.map(err => err.message)).toContain("Description is required");
     });
 
     test("valid todo should be created", async () => {
-        const createTodo = new CreateTodo(todoRepository);
-
         const todoAttempt = new Todo(todoGuid, "some valid title", "some valid description");
 
-        await createTodo.handleAsync(todoGuid, "some valid title", "some valid description");
+        await dispatchTodoAsync("some valid title", "some valid description");
 
-        const todo = await todoRepository.getByIdAsync(todoGuid);
+        const todo = selectTodoById(store.getState().todos.items, todoGuid);
 
         expect(todo).toStrictEqual(todoAttempt);
     });

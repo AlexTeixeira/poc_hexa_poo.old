@@ -1,25 +1,22 @@
-import {Before, Given, Then, When} from "@cucumber/cucumber";
+import {Given, Then, When} from "@cucumber/cucumber";
 import {Todo} from "../../../src/domain/todoAggregate/Todo";
-import {ErrorDriver} from "../../commons/ErrorDriver";
-import {TodoRepository} from "../../../src/domain/todoAggregate/ports/TodoRepository";
-import {CreateTodo} from "../../../src/application/useCases/CreateTodo";
-import testContainer from "../../../src/config/TestDIContainer";
-import DIContainerType from "../../../src/domain/DIContainerType";
 import {expect} from "expect";
+import {store} from "../../../src/application/states/app/store";
+import {createTodoAsync} from "../../../src/application/states/features/todo/useCases/createTodo";
+import {selectTodoById} from "../../../src/application/states/features/todo/todosSlice";
 
 let todoTitle: string = "";
 let todoDescription: string = "";
 let todoAttempt: Todo | undefined;
-let errorDriver: ErrorDriver;
-let todoRepository: TodoRepository;
 const todoId = "some-valid-guid";
 
-
-Before(() => {
-    todoRepository = testContainer.get<TodoRepository>(DIContainerType.TodoRepository);
-    errorDriver = testContainer.get<ErrorDriver>(DIContainerType.ErrorDriver);
-});
-
+function dispatchTodoAsync(title: string, description: string) {
+    return store.dispatch(createTodoAsync({
+        id: todoId,
+        title: title,
+        description: description,
+    }));
+}
 
 Given(/^I have a todo with (.*) and (.*)$/, function (title?: string, description?: string) {
     todoTitle = title ?? "";
@@ -30,14 +27,13 @@ When('I create the todo', async function () {
     if (todoTitle !== "" && todoDescription !== "") {
         todoAttempt = new Todo(todoId, todoTitle, todoDescription);
     }
-    const createTodo = new CreateTodo(todoRepository);
 
-    await errorDriver.handleError(async () => {
-        await createTodo.handleAsync(todoId, todoTitle, todoDescription);
-    })
+    await dispatchTodoAsync(todoTitle, todoDescription);
+
 });
 
 Then('Todo should be created', async function () {
-    const todo = await todoRepository.getByIdAsync(todoId);
+    const todo = selectTodoById(store.getState().todos.items, todoId);
+
     expect(todo).toStrictEqual(todoAttempt);
 });

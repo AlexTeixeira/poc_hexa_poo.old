@@ -1,11 +1,10 @@
 import {Then} from "@cucumber/cucumber";
-import testContainer from "../../../src/config/TestDIContainer";
-import DIContainerType from "../../../src/domain/DIContainerType";
-import {ErrorDriver} from "../../commons/ErrorDriver";
 import {expect} from "expect";
+import {store} from "../../../src/application/states/app/store";
+import {SpecificationErrorResult} from "../../../src/domain/core/Specification";
 
 Then(/^I should be noticed with "([^"]*)"$/, function (message: string) {
-    const errorDriver = testContainer.get<ErrorDriver>(DIContainerType.ErrorDriver);
-    const lastError: Error = errorDriver.getLastError();
-    expect(lastError.message).toContain(message);
+    const error: SpecificationErrorResult | undefined = store.getState().todos.error;
+    expect(error).toBeDefined();
+    expect(error?.message).toContain(message);
 });

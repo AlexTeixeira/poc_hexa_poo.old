@@ -16,6 +16,7 @@
   },
   "scripts": {
     "build": "yarn workspaces foreach run build",
+    "install": "yarn workspaces foreach run install",
     "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock"
   }
 }
