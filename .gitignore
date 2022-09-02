@@ -175,3 +175,10 @@ yarn-error.log*
 /core/coverage/lcov-report/src/domain/todoAggregate/ValidTodoSpecification.ts.html
 /.idea/vcs.xml
 /.idea/workspace.xml
+/core/src/domain/todoAggregate/Index.d.ts
+/core/src/domain/todoAggregate/Todo.d.ts
+/core/src/application/states/features/todo/models/TodoDto.d.ts
+/core/src/domain/todoAggregate/TodoStatus.d.ts
+/core/src/domain/todoAggregate/TodoStatus.js
+/core/src/domain/todoAggregate/TodoStatus.js.map
+/core/src/application/states/features/todo/useCases/updateStateTodo.d.ts

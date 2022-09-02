@@ -4,9 +4,9 @@ import {ServiceProviderType} from "../../config/ThunkServiceProvider";
 import {TodoRepository} from "../../../../../domain/todoAggregate/ports/TodoRepository";
 import DIContainerType from "../../../../../domain/DIContainerType";
 import {SpecificationErrorResult} from "../../../../../domain/core/Specification";
-import {TodoState} from "../../../../../domain/todoAggregate/TodoState";
+import {TodoStatus} from "../../../../../domain/todoAggregate/TodoStatus";
 
-export const updateTodoStateAsync = createAsyncThunk<Todo[], { id: string, state: TodoState }, {
+export const updateTodoStateAsync = createAsyncThunk<Todo[], { id: string, state: TodoStatus }, {
     extra: ServiceProviderType
 }>(
     'todos/put/state',

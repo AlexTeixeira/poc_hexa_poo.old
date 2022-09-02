@@ -7,6 +7,7 @@ import {updateTodoAsync} from "./useCases/updateTodo";
 import {deleteTodoAsync} from "./useCases/deleteTodo";
 import {updateTodoStateAsync} from "./useCases/updateStateTodo";
 import {loadTodosAsync} from "./useCases/loadTodos";
+import {TodoStatus} from "../../../../domain/todoAggregate/TodoStatus";
 
 export interface TodosState {
     items: Todo[];
@@ -49,6 +50,7 @@ export const todosSlice = createSlice({
 });
 
 export const selectTodos = (state: RootState) => state.todos.items;
+export const selectTodosByState = (state: RootState, todoState: TodoStatus) => state.todos.items.filter((todo) => todo.state === todoState);
 export const selectTodoById = (todos: Todo[], id: string) => todos.find(todo => todo.id === id);
 export const selectErrorByKey = (state: RootState, key: string) => state.todos.error?.errors.find(error => error.key === key)?.message;
 

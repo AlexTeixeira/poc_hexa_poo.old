@@ -2,7 +2,7 @@ import {TodoRepository} from "../../src/domain/todoAggregate/ports/TodoRepositor
 import testContainer from "../../src/config/TestDIContainer";
 import DIContainerType from "../../src/domain/DIContainerType";
 import {Todo} from "../../src/domain/todoAggregate/Todo";
-import {TodoState} from "../../src/domain/todoAggregate/TodoState";
+import {TodoStatus} from "../../src/domain/todoAggregate/TodoStatus";
 import {store} from "../../src/application/states/app/store";
 import {updateTodoStateAsync} from "../../src/application/states/features/todo/useCases/updateStateTodo";
 import {selectTodoById} from "../../src/application/states/features/todo/todosSlice";
@@ -14,14 +14,14 @@ describe("updateTodo", () => {
     let todoRepository: TodoRepository;
 
 
-    async function dispatchTodoAsync(id: string, state: TodoState) {
+    async function dispatchTodoAsync(id: string, state: TodoStatus) {
         return store.dispatch(updateTodoStateAsync({
             id: id,
             state: state,
         }));
     }
 
-    async function dispatchTodoAndReturnErrorAsync(id: string, state: TodoState) {
+    async function dispatchTodoAndReturnErrorAsync(id: string, state: TodoStatus) {
         await dispatchTodoAsync(id, state);
 
         return store.getState().todos.error;
@@ -34,15 +34,15 @@ describe("updateTodo", () => {
     });
 
     test("not found todo should raise an error", async () => {
-        const error = await dispatchTodoAndReturnErrorAsync("bad-guid", TodoState.InProgress);
+        const error = await dispatchTodoAndReturnErrorAsync("bad-guid", TodoStatus.InProgress);
 
         await expect(error).toBeDefined();
         // @ts-ignore
         expect(error.errors.map(err => err.message)).toContain("Selected todo does not exist");
     });
 
-    test.each([TodoState.New, TodoState.InProgress, TodoState.Done])
-    ("valid todo should be updated", async (state: TodoState) => {
+    test.each([TodoStatus.New, TodoStatus.InProgress, TodoStatus.Done])
+    ("valid todo should be updated", async (state: TodoStatus) => {
         await dispatchTodoAsync(todoId, state);
 
         const todo = selectTodoById(store.getState().todos.items, todoId);

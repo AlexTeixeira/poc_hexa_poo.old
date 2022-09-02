@@ -1,14 +1,14 @@
 import {Then, When} from "@cucumber/cucumber";
-import {TodoState} from "../../../src/domain/todoAggregate/TodoState";
+import {TodoStatus} from "../../../src/domain/todoAggregate/TodoStatus";
 import {store} from "../../../src/application/states/app/store";
 import {TodoConstant} from "./todoConstants.steps";
 import {updateTodoStateAsync} from "../../../src/application/states/features/todo/useCases/updateStateTodo";
 import {selectTodoById} from "../../../src/application/states/features/todo/todosSlice";
 import {expect} from "expect";
 
-let todoState: TodoState = TodoState.New;
+let todoState: TodoStatus = TodoStatus.New;
 
-When(/^I update the status to "([^"]*)"$/, async function (state: TodoState) {
+When(/^I update the status to "([^"]*)"$/, async function (state: TodoStatus) {
     todoState = state;
     await store.dispatch(updateTodoStateAsync({
         id: TodoConstant.todoId,

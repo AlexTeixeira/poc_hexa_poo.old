@@ -1,4 +1,4 @@
-export enum TodoState {
+export enum TodoStatus {
     New,
     InProgress,
     Done,
