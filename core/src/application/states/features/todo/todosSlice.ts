@@ -6,10 +6,11 @@ import {Todo} from "../../../../domain/todoAggregate/Todo";
 import {updateTodoAsync} from "./useCases/updateTodo";
 import {deleteTodoAsync} from "./useCases/deleteTodo";
 import {updateTodoStateAsync} from "./useCases/updateStateTodo";
+import {loadTodosAsync} from "./useCases/loadTodos";
 
 export interface TodosState {
     items: Todo[];
-    status: 'idle' | 'loading' | 'failed';
+    status: 'idle' | 'loading' | 'failed' | 'success';
     error: SpecificationErrorResult | undefined
 }
 
@@ -25,26 +26,30 @@ export const todosSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addMatcher(isAnyOf (createTodoAsync.pending, updateTodoAsync.pending, deleteTodoAsync.pending, updateTodoStateAsync.pending),
+            .addMatcher(isAnyOf(createTodoAsync.pending, updateTodoAsync.pending, deleteTodoAsync.pending, updateTodoStateAsync.pending,
+                    loadTodosAsync.pending),
                 (state) => {
-                state.status = 'loading';
-            })
-            .addMatcher(isAnyOf (createTodoAsync.fulfilled, updateTodoAsync.fulfilled, deleteTodoAsync.fulfilled, updateTodoStateAsync.fulfilled),
-                (state,action) => {
-                state.status = 'idle';
-                state.items = action.payload;
-            })
-            .addMatcher(isAnyOf (createTodoAsync.rejected, updateTodoAsync.rejected, deleteTodoAsync.rejected, updateTodoStateAsync.rejected), (state, action) => {
-                state.status = 'failed';
-                if (action.error.message) {
-                    state.error = JSON.parse(action.error.message);
-                }
-            });
+                    state.status = 'loading';
+                })
+            .addMatcher(isAnyOf(createTodoAsync.fulfilled, updateTodoAsync.fulfilled, deleteTodoAsync.fulfilled, updateTodoStateAsync.fulfilled,
+                    loadTodosAsync.fulfilled),
+                (state, action) => {
+                    state.status = 'success';
+                    state.items = action.payload;
+                })
+            .addMatcher(isAnyOf(createTodoAsync.rejected, updateTodoAsync.rejected, deleteTodoAsync.rejected, updateTodoStateAsync.rejected,
+                    loadTodosAsync.rejected),
+                (state, action) => {
+                    state.status = 'failed';
+                    if (action.error.message) {
+                        state.error = JSON.parse(action.error.message);
+                    }
+                });
     },
 });
 
 export const selectTodos = (state: RootState) => state.todos.items;
 export const selectTodoById = (todos: Todo[], id: string) => todos.find(todo => todo.id === id);
-
+export const selectErrorByKey = (state: RootState, key: string) => state.todos.error?.errors.find(error => error.key === key)?.message;
 
 export default todosSlice.reducer;

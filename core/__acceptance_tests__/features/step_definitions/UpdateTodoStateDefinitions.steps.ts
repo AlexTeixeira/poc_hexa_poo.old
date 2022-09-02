@@ -1,7 +1,7 @@
 import {Then, When} from "@cucumber/cucumber";
 import {TodoState} from "../../../src/domain/todoAggregate/TodoState";
 import {store} from "../../../src/application/states/app/store";
-import {TodoConstant} from "./todoConstants";
+import {TodoConstant} from "./todoConstants.steps";
 import {updateTodoStateAsync} from "../../../src/application/states/features/todo/useCases/updateStateTodo";
 import {selectTodoById} from "../../../src/application/states/features/todo/todosSlice";
 import {expect} from "expect";

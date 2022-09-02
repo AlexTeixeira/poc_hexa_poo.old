@@ -1,5 +1,5 @@
 import {Before, Then, When} from "@cucumber/cucumber";
-import {TodoConstant} from "./todoConstants";
+import {TodoConstant} from "./todoConstants.steps";
 import {ErrorDriver} from "../../commons/ErrorDriver";
 import testContainer from "../../../src/config/TestDIContainer";
 import DIContainerType from "../../../src/domain/DIContainerType";

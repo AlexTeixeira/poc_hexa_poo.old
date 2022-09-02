@@ -1,6 +1,6 @@
 import {Before, Given, Then, When} from "@cucumber/cucumber";
 import {Todo} from "../../../src/domain/todoAggregate/Todo";
-import {TodoConstant} from "./todoConstants";
+import {TodoConstant} from "./todoConstants.steps";
 import {expect} from "expect";
 import {store} from "../../../src/application/states/app/store";
 import {updateTodoAsync} from "../../../src/application/states/features/todo/useCases/updateTodo";
